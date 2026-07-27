@@ -1,0 +1,378 @@
+/* ==========================================================================
+   Yvonne Tang 个人网站 — 设计系统 v3
+   参考 hungryworkshop.com.au：大字标题 + 摄影拼贴 + 大量留白 + 极简克制配色
+   ========================================================================== */
+
+:root {
+  --bg: #fdfbf6;
+  --title-cyan: #5ce1e6;
+  --misty-blue: #6d83a2;
+  --font-yeseva: "Yeseva One", "Anton", serif;
+  --font-garamond: "EB Garamond", Garamond, serif;
+  --paper: #faf9f6;
+  --line: #e7e4dc;
+  --ink: #17181a;
+  --ink-soft: #6b6f76;
+  --accent: #2b4a63;
+  --accent-soft: #eef2f5;
+
+  --font-display: "Anton", "Archivo Black", sans-serif;
+  --font-sans: "Inter", "Noto Sans SC", "PingFang SC", -apple-system, sans-serif;
+
+  --max-width: 1180px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+.wrap { max-width: var(--max-width); margin: 0 auto; padding: 0 40px; }
+
+/* ---------- 导航 ---------- */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 76px;
+}
+
+.brand {
+  /* 和首页大标题"YVONNE'S WORLD"用同一个衬线展示字体，不用之前的
+     Anton 无衬线——那个字体只有这一处在用，和网站其他地方的
+     衬线体调性不统一 */
+  font-family: var(--font-yeseva);
+  font-size: 20px;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+}
+
+.nav-links { display: flex; gap: 36px; list-style: none; margin: 0; padding: 0; }
+
+.nav-links a {
+  /* 和网站里其他链接（"← Back"、联系邮箱等）统一用 EB Garamond 斜体，
+     不再用之前的无衬线大写字母小标签风格 */
+  font-family: var(--font-garamond);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--ink-soft);
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav-links a:hover, .nav-links a.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+.nav-toggle { display: none; }
+
+/* ---------- Hero 拼贴 ---------- */
+
+.hero {
+  padding: 56px 0 0;
+}
+
+/* ===== 拼贴墙：完全重写，1:1 还原 YVONNE_TANG.png 设计稿 =====
+   容器按设计稿内容区比例 1364:830 ≈ 1.643:1 锁定，
+   每张图 / 每行标题 / 文案区都用 left/top/width（结合 height 或 aspect-ratio）的
+   百分比绝对定位，数值来自对设计稿的逐像素测量换算，不用固定像素、不用居中自动排版 */
+
+.hero-collage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1364 / 830;
+}
+
+.ynw-photo {
+  position: absolute;
+  overflow: hidden;
+  background: var(--paper);
+  box-shadow: 0 2px 14px rgba(23, 24, 26, 0.1);
+}
+
+.ynw-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+
+.ynw-photo .rivet {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(23,24,26,0.12);
+  z-index: 2;
+}
+
+/* 图1：模糊树影，最左窄竖图 */
+.ynw-p1 { left: 9%;    top: 27.1%; width: 16%;   height: 34%;   z-index: 1; }
+/* 图2：沙滩照，压在图1右上方 */
+.ynw-p2 { left: 19%;   top: 18.1%; width: 16.5%; height: 37.6%; z-index: 3; }
+/* 图4：树枝望海，全场最大的横图，右上角 */
+.ynw-p3 { left: 47.3%; top: 10.8%; width: 30.1%; height: 35%;   z-index: 1; }
+/* 图3：四子棋游戏 */
+.ynw-p4 { left: 31.7%; top: 51.2%; width: 18.3%; height: 37.4%; z-index: 2; }
+/* 图5：教室手托脸颊 */
+.ynw-p5 { left: 73.3%; top: 42.2%; width: 17.4%; height: 37.9%; z-index: 2; }
+
+.ynw-title {
+  position: absolute;
+  z-index: 5;
+  font-family: var(--font-yeseva);
+  color: var(--title-cyan);
+  line-height: 0.9;
+  white-space: nowrap;
+}
+
+.ynw-title.line1 { left: 8.8%; top: 11.4%; font-size: clamp(34px, 10.8vw, 148px); }
+.ynw-title.line2 { left: 16.5%; top: 32.5%; font-size: clamp(34px, 10.8vw, 148px); }
+
+.ynw-copy {
+  position: absolute;
+  left: 51.5%;
+  top: 68.1%;
+  width: 20.7%;
+  z-index: 4;
+}
+
+.ynw-copy h2 {
+  font-family: var(--font-garamond);
+  font-weight: 600;
+  font-size: clamp(16px, 1.9vw, 26px);
+  line-height: 1.28;
+  color: var(--misty-blue);
+  margin: 0 0 14px;
+}
+
+.ynw-copy p {
+  font-family: var(--font-garamond);
+  font-weight: 400;
+  font-size: clamp(13px, 1.25vw, 17px);
+  line-height: 1.55;
+  color: var(--misty-blue);
+  margin: 0 0 8px;
+}
+
+@media (max-width: 900px) {
+  .hero-collage {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+  .ynw-photo { position: static; width: 100% !important; height: auto !important; aspect-ratio: 4/5; order: 1; }
+  .ynw-photo .rivet { display: none; }
+  .ynw-title { position: static; font-size: clamp(40px, 16vw, 90px); white-space: normal; order: 0; }
+  .ynw-copy { position: static; width: 100%; margin-top: 20px; order: 2; }
+}
+
+/* ---------- 通用区块 ---------- */
+
+section { padding: 100px 0; }
+.section-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 40px;
+}
+
+/* ---------- Part 2 关于我是谁 ---------- */
+
+.about-teaser .wrap {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.profile-frame {
+  background: var(--accent-soft);
+  border-radius: 4px;
+  padding: 30px 30px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+}
+
+.profile-frame img { width: 100%; height: 100%; object-fit: contain; object-position: bottom; }
+
+.teaser-list { list-style: none; margin: 0; padding: 0; }
+
+.teaser-list li { border-bottom: 1px solid var(--line); }
+
+.teaser-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30px 4px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(24px, 3vw, 34px);
+  color: var(--ink);
+  transition: color 0.2s, padding-left 0.2s;
+}
+
+.teaser-list a:hover { color: var(--accent); padding-left: 14px; }
+
+.teaser-list .arrow { font-size: 20px; color: var(--ink-soft); }
+
+/* ---------- Part 3 过往经历 ---------- */
+
+.experience-teaser .wrap {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 70px;
+  align-items: start;
+}
+
+.experience-teaser .side-note {
+  font-size: 15px;
+  color: var(--ink-soft);
+  padding-top: 30px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 860px) {
+  .about-teaser .wrap, .experience-teaser .wrap { grid-template-columns: 1fr; }
+  .profile-frame { max-width: 320px; margin: 0 auto; }
+}
+
+/* ---------- 详情页通用 ---------- */
+
+.detail-hero { padding: 60px 0 20px; border-bottom: 1px solid var(--line); }
+.detail-hero .back-link { font-size: 13px; color: var(--ink-soft); letter-spacing: 0.05em; }
+.detail-hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px,6vw,64px); margin: 20px 0 6px; }
+.detail-hero p.sub { color: var(--ink-soft); font-size: 15px; margin: 0 0 30px; }
+
+.detail-block { padding: 70px 0; border-bottom: 1px solid var(--line); }
+.detail-block:target { background: var(--accent-soft); }
+
+.detail-block h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(26px,4vw,40px); margin: 0 0 6px; }
+.detail-block .meta { font-size: 13px; color: var(--ink-soft); letter-spacing: 0.04em; margin-bottom: 30px; }
+
+.star-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 22px; }
+.star-block h5 { font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+.star-block p, .star-block ul { font-size: 15px; color: var(--ink); margin: 0; }
+.star-block ul { padding-left: 18px; }
+.star-block li { margin-bottom: 6px; }
+
+.result-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+.result-chip { background: var(--accent-soft); color: var(--accent); font-size: 12.5px; padding: 7px 15px; border-radius: 20px; }
+
+.media-slot {
+  background: var(--paper);
+  border: 1px dashed var(--ink-soft);
+  color: var(--ink-soft);
+  font-size: 13px;
+  text-align: center;
+  padding: 28px 20px;
+  margin-top: 16px;
+}
+
+audio, video { width: 100%; display: block; margin-top: 14px; }
+
+.timeline { list-style: none; margin: 0 0 10px; padding: 0; }
+.timeline li { padding: 0 0 24px 24px; border-left: 2px solid var(--line); position: relative; margin-left: 4px; }
+.timeline li::before { content:""; position:absolute; left:-6px; top:4px; width:10px; height:10px; background: var(--accent); border-radius:50%; border:2px solid var(--bg); }
+.timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.timeline .when { font-size: 11.5px; color: var(--accent); letter-spacing: 0.05em; }
+.timeline .what { font-family: var(--font-display); font-weight: 400; font-size: 20px; margin: 3px 0 2px; }
+.timeline .where { font-size: 13px; color: var(--ink-soft); }
+
+.tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.pill { background: var(--accent-soft); color: var(--accent); font-size: 13px; padding: 8px 18px; border-radius: 20px; }
+
+blockquote.self-note {
+  font-size: 18px;
+  line-height: 1.85;
+  color: var(--ink);
+  margin: 0 0 20px;
+  padding-left: 20px;
+  border-left: 3px solid var(--accent);
+}
+
+/* ---------- 按钮 ---------- */
+
+.btn {
+  display: inline-block;
+  padding: 14px 30px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+.btn:hover { background: var(--ink); color: var(--bg); }
+
+/* ---------- 首页底部联系区块 ---------- */
+
+.contact-cta { padding: 60px 0 10px; text-align: center; }
+.contact-cta .contact-icon {
+  display: inline-flex;
+  color: var(--misty-blue);
+  margin-bottom: 16px;
+}
+.contact-cta h2 {
+  font-family: var(--font-garamond);
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 34px);
+  color: var(--misty-blue);
+  margin: 0 0 16px;
+}
+.contact-cta a {
+  display: inline-block;
+  font-family: var(--font-garamond);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--misty-blue);
+  border-bottom: 1px solid var(--misty-blue);
+  padding-bottom: 2px;
+  text-decoration: none;
+}
+
+/* ---------- 页脚 ---------- */
+
+.site-footer { padding: 70px 0; border-top: 1px solid var(--line); }
+.site-footer .wrap { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 30px; }
+.site-footer .brand { font-size: 22px; }
+.site-footer .copyright { font-size: 12px; color: var(--ink-soft); margin-top: 20px; }
+
+/* ---------- 响应式 ---------- */
+
+@media (max-width: 700px) {
+  .wrap { padding: 0 24px; }
+  section { padding: 64px 0; }
+  .star-grid { grid-template-columns: 1fr; }
+  .nav-links {
+    position: fixed; top: 76px; left: 0; right: 0;
+    background: var(--bg);
+    flex-direction: column;
+    padding: 20px 24px;
+    display: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-links.open { display: flex; }
+  .nav-toggle { display: block; background: none; border: none; font-size: 22px; color: var(--ink); cursor: pointer; }
+}

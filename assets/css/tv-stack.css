@@ -1,0 +1,416 @@
+/* ==========================================================================
+   video-editing.html — "复古电视堆叠" 静态展示
+   左侧 5 台老式电视机交错堆叠。电视机整体图（tv-stack-nostatic.png，
+   源自素材 20.png）屏幕区域本身就是真实镂空透明的，盖在最上层，靠自身
+   alpha 通道限定下面视频/雪花画面的可见范围——不需要任何 clip-path/
+   border-radius 去模拟屏幕弧形轮廓。其中 3 台（Creative Projects /
+   Journalism / Commercial）可交互：悬停时屏幕从雪花噪点切到视频预览
+   （带一段短暂的"调台"闪烁），点击弹出视频弹窗或跳转外部链接；另外
+   2 台纯装饰，垫静态雪花图，不可点击。
+   右侧文字区域（.video-showcase / .vs-copy 等）延续之前 CardSwap 版本
+   的样式，逻辑没变，只是从 cardswap.css 搬过来
+   ========================================================================== */
+
+.video-showcase {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 76px);
+  padding: 70px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 70px;
+  flex-wrap: wrap;
+}
+
+.vs-copy {
+  position: relative;
+  z-index: 2;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 400px;
+  margin: -70px 0;
+  padding: 70px 40px;
+  text-align: left;
+}
+
+.video-showcase h2 {
+  font-family: "EB Garamond", serif;
+  font-weight: 600;
+  color: #6d83a2;
+  font-size: clamp(26px, 4vw, 36px);
+  margin: 0 0 18px;
+}
+
+.video-showcase .vs-body {
+  font-family: "EB Garamond", serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #6d83a2;
+  opacity: 0.85;
+  margin: 0;
+}
+
+.video-showcase .vs-back {
+  display: inline-block;
+  margin-top: 26px;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  color: #6d83a2;
+  font-size: 15px;
+  border-bottom: 1px solid #6d83a2;
+  padding-bottom: 2px;
+  text-decoration: none;
+  width: fit-content;
+}
+
+/* ---------- 电视堆叠：整张已排好版的合成图 + 3 个透明热区 ---------- */
+
+/* 轻量引导文字：放在电视堆叠左上角本来就空着的那块区域里
+   （最上层那台电视左边、二排左边那台电视上边，合成图里这块
+   本来就没有任何电视机），不占用额外版面 */
+.tv-stack-hint {
+  position: absolute;
+  z-index: 4;
+  left: 0%;
+  top: 30%;
+  white-space: nowrap;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6d83a2;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.tv-stack {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  /* 显式给容器一个宽高比（等于新素材 20.png 裁边之后的实际比例
+     2216:2286），道理同之前——热区用百分比定位，容器必须有确定的
+     高度才能算得准 */
+  aspect-ratio: 2216 / 2286;
+  flex-shrink: 0;
+}
+
+/* 电视机整体图：这次直接用素材20（屏幕区域本来就是真实镂空透明的，
+   不是我们自己抠的），放在最上层，位置/尺寸和热区一样用 inset:0；
+   pointer-events:none 让鼠标事件穿透到下面的热区 */
+.tv-collage {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* 热区：绝对定位叠在合成图对应电视屏幕的位置上（百分比坐标是
+   在素材20.png里按真实透明像素精确量出来的，不再是颜色边界估的），
+   层级在电视机整体图下面。屏幕的弧形/斜切边界完全靠上层电视图片
+   自身真实的镂空轮廓限定，不需要任何 border-radius/clip-path 去
+   模拟形状——多出来的边缘都会被上面不透明的机身部分盖住 */
+.tv-hotspot {
+  position: absolute;
+  z-index: 1;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.tv-hotspot:focus-visible { outline: none; }
+
+.tv-hotspot.journalism { left: 3.38%;  top: 67.63%; width: 34.07%; height: 26.12%; }
+.tv-hotspot.creative   { left: 59.61%; top: 74.98%; width: 25.14%; height: 19.12%; }
+.tv-hotspot.midleft    { left: 8.17%;  top: 44.71%; width: 22.25%; height: 15.97%; }
+
+/* Commercial（TV17）是斜着拍的，拆成可旋转的 wrapper（见下面
+   .tv17-wrapper），这里的坐标是相对 wrapper（转正之后的电视图）
+   量出来的局部坐标，不是相对整张合成图的坐标 */
+.tv-hotspot.commercial { left: 17.73%; top: 27.69%; width: 50.04%; height: 43.26%; }
+
+/* hover/focus 时热区本身轻微放大，暗示"这里能点"；纯装饰的两台
+   （画面里的另外两台电视）没有对应热区，天然不会有这个反馈 */
+.tv-hotspot:hover,
+.tv-hotspot:focus-visible {
+  transform: scale(1.04);
+}
+
+/* 默认显示的雪花噪点底图：从原图对应区域裁下来的静态画面，
+   电视机整体图叠在上面之前这张图就在，不会有"挖空之后露出空白"
+   的瞬间。z-index 显式排在 .tv-preview 下面，进入 is-active 状态
+   后直接 opacity:0 隐藏——不指望"被视频盖住"这种间接方式，
+   避免过渡中途或视频尚未出画面时雪花图跟视频同时露出来 */
+.tv-static {
+  position: absolute;
+  z-index: 1;
+  /* 放大到 118%、居中，避免热区矩形和屏幕实际弧形边缘之间的缝隙
+     露出雪花图以外的东西（"漏边"）；多出来的部分交给 .tv-hotspot
+     的 overflow:hidden 裁掉 */
+  left: 50%;
+  top: 50%;
+  width: 118%;
+  height: 118%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  transition: opacity 0.15s ease;
+}
+
+.tv-hotspot.is-active .tv-static { opacity: 0; }
+
+/* Creative Projects（右下角那台）单独再放大一点，之前 118% 还不够盖满 */
+.tv-hotspot.creative .tv-static {
+  width: 135%;
+  height: 135%;
+}
+
+.tv-preview {
+  position: absolute;
+  z-index: 2;
+  /* style.css 里全站通用的 `audio, video{margin-top:14px}` 会套到
+     这里的 <video>（.tv-static 用的是 <img>，不受影响），把居中
+     算出来的位置往下顶偏 14px，这里显式清零盖掉它 */
+  margin: 0;
+  /* 保留 contain（画面不裁切、不变形），把这一层本身放大到 240%、
+     居中，让画面明显超出屏幕范围，黑边基本裁没；这条规则是三台
+     （Journalism/Creative Projects/Commercial）共用的，多放大
+     出来的部分交给 .tv-hotspot 的 overflow:hidden 裁掉，不会溢出
+     屏幕轮廓之外 */
+  left: 50%;
+  top: 50%;
+  width: 240%;
+  height: 240%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  background-color: #000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  /* 做旧滤镜：让画面偏暖褪色，别太清晰锐利，和电视机做旧的
+     整体质感统一，别像"贴了张清晰照片上去" */
+  filter: sepia(20%) contrast(1.1) saturate(0.9);
+}
+
+.tv-hotspot.is-active .tv-preview { opacity: 1; }
+
+/* CRT 扫描线：细密的水平暗线纹理，只在画面亮起时显示 */
+.tv-scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.16) 0px,
+    rgba(0, 0, 0, 0.16) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.tv-hotspot.is-active .tv-scanlines { opacity: 1; }
+
+.tv-noise-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.9) 0px,
+    rgba(190, 190, 190, 0.6) 2px,
+    rgba(255, 255, 255, 0.9) 4px
+  );
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tv-hotspot.is-tuning .tv-noise-flash {
+  animation: tv-flicker 0.35s steps(2) 1;
+}
+
+
+/* Commercial（TV17）单独拆出来的可旋转 wrapper：
+   tv17-derotated.png 是把这台电视先"转正"（screen 转成水平矩形）
+   之后的版本，wrapper 整体再转回原来拍摄的倾斜角度 13.96deg——
+   电视图和里面的视频热区都是 wrapper 的子元素，跟着 wrapper 一起转，
+   彼此的相对位置从"转正"状态下就已经对齐好了，不会再出现电视是斜的、
+   视频是正的错位。wrapper 的 left/top/width/height 是按它在整张
+   合成图里原来所占的位置换算出来的（中心点对齐，转回去之后应该刚好
+   落回原来的视觉位置） */
+.tv17-wrapper {
+  position: absolute;
+  z-index: 3;
+  left: 41.25%;
+  top: 34.74%;
+  width: 50.41%;
+  height: 41.86%;
+  transform: rotate(13.96deg);
+  transform-origin: center center;
+}
+
+.tv17-shell {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* 最顶部这台（素材23）同样是斜着拍的，wrapper 的 left/top/width/height
+   是按它在整张合成图里原来所占的位置换算出来的（中心点对齐，转回去
+   之后应该刚好落回原来的视觉位置），做法跟 .tv17-wrapper 一致 */
+.tv23-wrapper {
+  position: absolute;
+  z-index: 3;
+  left: 24.11%;
+  top: -0.97%;
+  width: 35.22%;
+  height: 45.03%;
+  transform: rotate(-5.856deg);
+  transform-origin: center center;
+}
+
+.tv23-shell {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* 屏幕区域：坐标是在转正后的 tv23-derotated.png 里量出来的局部坐标，
+   不是相对整张合成图的坐标，本身就是精确量出来的屏幕矩形（不像其他
+   几台是轴对齐估的），所以 .tv-static/.tv-preview 不需要再故意放大，
+   直接 100% + cover 铺满裁边即可 */
+.tv23-screen {
+  left: 19.19%;
+  top: 30.03%;
+  width: 56.23%;
+  height: 57.46%;
+}
+
+.tv23-screen .tv-static,
+.tv23-screen .tv-preview {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: none;
+  object-fit: cover;
+  margin: 0;
+}
+
+@keyframes tv-flicker {
+  0%   { opacity: 0.9; }
+  20%  { opacity: 0.15; }
+  40%  { opacity: 0.85; }
+  60%  { opacity: 0.1; }
+  80%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+/* 分类名标签：悬停时才浮现在热区正下方 */
+.tv-label {
+  position: absolute;
+  left: 50%;
+  bottom: -24px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #6d83a2;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.tv-hotspot:hover .tv-label,
+.tv-hotspot:focus-visible .tv-label {
+  opacity: 1;
+}
+
+@media (max-width: 620px) {
+  .video-showcase {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 0;
+    overflow: visible;
+    gap: 30px;
+    padding-bottom: 50px;
+  }
+  .vs-copy {
+    max-width: none;
+    align-self: auto;
+    margin: 0;
+    padding: 24px;
+  }
+  .tv-stack { max-width: 420px; margin: 0 auto; }
+}
+
+/* ---------- 点击 Journalism / Creative Projects 电视弹出的视频弹窗 ---------- */
+
+.video-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 300;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.video-modal-overlay.is-open {
+  display: flex;
+}
+
+.video-modal {
+  position: relative;
+  width: 65vw;
+  max-width: 960px;
+  background: #0e0e0e;
+  border-radius: 16px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+  line-height: 0;
+}
+
+.video-modal video {
+  display: block;
+  width: 100%;
+  max-height: 80vh;
+  background: #000;
+}
+
+.video-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 2;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fdfbf6;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-modal-close:hover { background: rgba(0, 0, 0, 0.75); }
+
+@media (max-width: 700px) {
+  .video-modal { width: 92vw; }
+}

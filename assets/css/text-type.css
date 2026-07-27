@@ -1,0 +1,34 @@
+/* ==========================================================================
+   TextType — 移植自 React Bits 的打字机效果组件（原版依赖 React + gsap，
+   这里改成不依赖任何框架/库的原生 HTML+CSS+JS 版本）
+   ========================================================================== */
+
+.text-type {
+  display: inline-block;
+  white-space: normal;
+}
+
+.text-type__cursor {
+  margin-left: 2px;
+  display: inline-block;
+  color: inherit;
+}
+
+.text-type__cursor.blinking {
+  animation: text-type-blink 0.5s step-end infinite;
+}
+
+@keyframes text-type-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 沿用原本简介文字的字体/字号/颜色/行高，替换的是内容展现方式，不是样式 */
+.yvonne-intro-text {
+  font-family: var(--font-garamond);
+  font-weight: 400;
+  font-size: clamp(13px, 1.25vw, 17px);
+  line-height: 1.55;
+  color: var(--misty-blue);
+  margin: 0 0 8px;
+}

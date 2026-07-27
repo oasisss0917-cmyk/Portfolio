@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editorial Design · Yvonne Tang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Yeseva+One&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/vendor/page-flip.css">
+<link rel="stylesheet" href="assets/css/magazine.css?v=14">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">YVONNE TANG</a>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html#top">Home</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="magazine-showcase">
+  <div class="magazine-copy">
+    <h2 class="magazine-title">Editorial Design</h2>
+    <p class="magazine-body">This is a magazine designed as a major coursework project, themed around the 2024 Paris Olympic Games. I was responsible for the editorial concept, layout design, and visual presentation, combining text, photography, and graphic design to create a cohesive reading experience. Several photographs featured in the magazine were taken by myself, contributing an original visual perspective to the publication.</p>
+    <a href="index.html#about" class="magazine-back">← Back</a>
+  </div>
+
+  <div class="magazine-visual">
+    <!-- 封面和书本叠在同一个 stage 里（都用 position:absolute 定位到
+         同一块区域），而不是各占一段普通文档流——这样封面消失、书本
+         出现，是同一个位置上的"内容切换"，不会因为封面收起/书本出现
+         导致下面内容跟着重新排版跳动。放弃了之前"翻页卡片仿真"的思路
+         （封面和内页原始比例不一样，背面强行塞第一页会在切换瞬间
+         露出裁切范围对不上的破绽，看起来比简单过渡更别扭）——改回
+         干净的缩放+淡入淡出，封面点击后缩小淡出，书本同时放大淡入 -->
+    <div class="magazine-stage" id="magazineStage">
+      <div class="magazine-cover-stage">
+        <div class="magazine-cover" id="magazineCover" role="button" tabindex="0" aria-label="打开杂志">
+          <img src="magazine/21.png" alt="Cover">
+          <span class="magazine-open-hint">Click to open</span>
+        </div>
+      </div>
+
+      <!-- 杂志逐页翻阅：用 St.PageFlip（page-flip 库的原生 JS 版本，
+           react-pageflip 就是套了层 React 壳的同一个引擎）实现真实拖拽
+           翻页物理效果。素材 magazine/1.png~20.png 每一张是真正的单页
+           （595×842），交给库自带的"单页/左右跨页"响应式逻辑处理即可；
+           showCover 是 false——这里面已经没有封面了，第1、2页本来就是
+           同一个跨页拆出来的左右两半，需要从一开始就并排展示 -->
+      <div class="magazine-flip-wrap" id="magazineFlipWrap" hidden>
+        <!-- 装订线：纯装饰遮罩，只在左右跨页并排模式下显示，由 magazine.js
+             监听翻页方向切换来控制（单页模式没有"中缝"，不该出现） -->
+        <div class="magazine-gutter" aria-hidden="true"></div>
+        <div id="magazineFlip" class="magazine-flipbook">
+          <div class="page"><img src="magazine/1.png" alt="Page 1"></div>
+          <div class="page"><img src="magazine/2.png" alt="Page 2"></div>
+          <div class="page"><img src="magazine/3.png" alt="Page 3"></div>
+          <div class="page"><img src="magazine/4.png" alt="Page 4"></div>
+          <div class="page"><img src="magazine/5.png" alt="Page 5"></div>
+          <div class="page"><img src="magazine/6.png" alt="Page 6"></div>
+          <div class="page"><img src="magazine/7.png" alt="Page 7"></div>
+          <div class="page"><img src="magazine/8.png" alt="Page 8"></div>
+          <div class="page"><img src="magazine/9.png" alt="Page 9"></div>
+          <div class="page"><img src="magazine/10.png" alt="Page 10"></div>
+          <div class="page"><img src="magazine/11.png" alt="Page 11"></div>
+          <div class="page"><img src="magazine/12.png" alt="Page 12"></div>
+          <div class="page"><img src="magazine/13.png" alt="Page 13"></div>
+          <div class="page"><img src="magazine/14.png" alt="Page 14"></div>
+          <div class="page"><img src="magazine/15.png" alt="Page 15"></div>
+          <div class="page"><img src="magazine/16.png" alt="Page 16"></div>
+          <div class="page"><img src="magazine/17.png" alt="Page 17"></div>
+          <div class="page"><img src="magazine/18.png" alt="Page 18"></div>
+          <div class="page"><img src="magazine/19.png" alt="Page 19"></div>
+          <div class="page"><img src="magazine/20.png" alt="Page 20"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="magazine-page-indicator" id="magazinePageIndicator" hidden><span id="magazineCurrentPage">1</span> / <span id="magazineTotalPages">20</span></p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <p class="brand">YVONNE TANG</p>
+      <p class="copyright">© 2026 唐艺文 · Tang Yiwen</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/vendor/page-flip.browser.js"></script>
+<script src="assets/js/magazine.js?v=10"></script>
+</body>
+</html>

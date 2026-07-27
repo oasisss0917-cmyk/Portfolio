@@ -1,0 +1,154 @@
+/* ==========================================================================
+   podcast.html — Podcast 独立子页面（"Heard On Soldier Island"）
+   外层米色背景 + 居中白色内容卡片，卡片内：左上角小字 → 大标题 →
+   右移一段距离的正文（与右侧方形封面大致垂直居中）→ 右侧封面图
+   ========================================================================== */
+
+.podcast-showcase {
+  background: #f4f0e3;
+  padding: 70px 40px;
+}
+
+.podcast-card {
+  max-width: 1300px;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 60px 70px;
+}
+
+.podcast-meta {
+  font-family: "EB Garamond", serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #a7b6cc;
+  margin: 0 0 70px;
+}
+
+.podcast-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+.podcast-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.podcast-title {
+  font-family: "EB Garamond", serif;
+  font-weight: 600;
+  font-size: clamp(28px, 3vw, 38px);
+  color: #4c6180;
+  margin: 0 0 54px;
+}
+
+.podcast-body {
+  font-family: "EB Garamond", serif;
+  font-size: 17px;
+  line-height: 1.75;
+  color: #6d83a2;
+  max-width: 460px;
+  margin: 0 0 0 100px;
+}
+
+.podcast-cover-wrap {
+  position: relative;
+  width: 380px;
+  height: 380px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.podcast-cover-wrap .podcast-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 播放/暂停图标：半透明深色圆形背景+白色图标，悬停时更明显；
+   pointer-events:none 让点击穿透到 .podcast-cover-wrap 上，
+   点击逻辑统一交给外层容器处理，不用图标自己再绑一次事件 */
+.podcast-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.75;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.podcast-cover-wrap:hover .podcast-play-btn,
+.podcast-cover-wrap:focus-visible .podcast-play-btn {
+  opacity: 1;
+}
+
+/* 播放进度条：贴在封面底边的一条细横条，点击可以跳转到对应位置。
+   cursor:pointer + 比图标高一点的点击热区（padding 撑出来），
+   方便点得准；stopPropagation 避免同时触发外层的播放/暂停切换 */
+.podcast-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 16px;
+  cursor: pointer;
+}
+
+.podcast-progress::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.podcast-progress-fill {
+  position: absolute;
+  left: 0;
+  bottom: 6px;
+  height: 4px;
+  width: 0%;
+  background: #fff;
+  pointer-events: none;
+}
+
+.podcast-play-btn .icon-play {
+  margin-left: 3px; /* 播放三角形视觉重心偏左，微调让它在圆里看起来居中 */
+}
+
+.podcast-back {
+  display: inline-block;
+  margin-top: 54px;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  color: #6d83a2;
+  font-size: 15px;
+  border-bottom: 1px solid #6d83a2;
+  padding-bottom: 2px;
+  text-decoration: none;
+}
+
+@media (max-width: 860px) {
+  .podcast-card { padding: 44px 32px; }
+  .podcast-main {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 36px;
+  }
+  .podcast-body { margin-left: 0; max-width: 100%; }
+  .podcast-cover-wrap { width: 100%; max-width: 380px; height: auto; aspect-ratio: 1 / 1; }
+}

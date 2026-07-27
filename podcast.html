@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podcast · Yvonne Tang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Yeseva+One&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/podcast.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">YVONNE TANG</a>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html#top">Home</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="podcast-showcase">
+  <div class="podcast-card">
+    <p class="podcast-meta">Adapted from<br>&lt;And Then There Were None&gt;</p>
+    <div class="podcast-main">
+      <div class="podcast-text">
+        <h2 class="podcast-title">Heard On Soldier Island</h2>
+        <p class="podcast-body">I was responsible for every stage of the production, including script adaptation, sound design, music selection, audio mixing, and post-production. The project explores the expressive potential of sound as a storytelling medium, using layered audio to build tension and create an immersive listening experience.</p>
+      </div>
+      <div class="podcast-cover-wrap" id="podcastCoverWrap" role="button" tabindex="0" aria-label="播放/暂停 Heard On Soldier Island 音频">
+        <img class="podcast-cover" src="assets/images/podcast-cover-13.jpg" alt="Heard On Soldier Island 播客封面">
+        <span class="podcast-play-btn">
+          <svg class="icon-play" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#fff"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" width="22" height="22" style="display:none" aria-hidden="true"><rect x="6" y="5" width="4" height="14" fill="#fff"/><rect x="14" y="5" width="4" height="14" fill="#fff"/></svg>
+        </span>
+        <div class="podcast-progress" id="podcastProgress">
+          <div class="podcast-progress-fill" id="podcastProgressFill"></div>
+        </div>
+        <audio id="podcastAudio" src="assets/audio/1.mp3" preload="none"></audio>
+      </div>
+    </div>
+    <a href="index.html#about" class="podcast-back">← Back</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <p class="brand">YVONNE TANG</p>
+      <p class="copyright">© 2026 唐艺文 · Tang Yiwen</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/podcast-audio.js"></script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+/* ==========================================================================
+   about.html — "Yvonne's Story"
+   从 React Bits 的 <Folder /> 组件移植成原生 HTML/CSS/JS 版本，
+   配色改为沿用站内的青绿 / 雾蓝 / 米白系统
+   ========================================================================== */
+
+.story-hero {
+  padding: 70px 0 90px;
+  text-align: center;
+}
+
+.story-hero .back-link {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink-soft);
+  letter-spacing: 0.05em;
+  margin-bottom: 30px;
+}
+
+.story-hero h1 {
+  font-family: "Yeseva One", serif;
+  font-weight: 400;
+  color: #5ce1e6;
+  font-size: clamp(40px, 8vw, 84px);
+  line-height: 0.98;
+  margin: 0 0 22px;
+}
+
+.story-hero .sub {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  color: #6d83a2;
+  font-size: clamp(15px, 1.6vw, 19px);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.story-folders { padding: 0 0 120px; }
+
+.folder-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 100px;
+  flex-wrap: wrap;
+}
+
+.folder-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.folder-label {
+  display: inline-block;
+  margin-top: 34px;
+  font-family: "EB Garamond", serif;
+  font-weight: 600;
+  color: #4c6180;
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+a.folder-label:hover { color: #2f6fd6; border-color: #2f6fd6; }
+
+/* ---------- 首页“关于我是谁”板块：只放一个居中的文件夹 ---------- */
+
+.about-teaser-folder {
+  min-height: 780px;
+  margin-top: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.folder-center { display: flex; justify-content: center; width: 100%; }
+
+/* ---------- folder--spread：点击后三个图标各自分散展开，带文字标签 ---------- */
+
+.folder--spread .expand-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 6;
+  width: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  transform: translate(-50%, -50%) scale(0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+}
+
+.folder--spread .expand-item img {
+  width: 170px;
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(51, 64, 79, 0.2));
+  transform: scale(1);
+  transition: transform 0.25s ease-out;
+}
+
+/* 书本+学士帽这张裁剪后画面内容比笔记本电脑那张更分散，
+   同样宽度看起来会偏小，所以单独放大到视觉观感一致，并把和文字的间距
+   也一并加大，避免放大后文字贴得太近 */
+.folder--spread .expand-bl,
+.folder--spread .expand-br {
+  gap: 16px;
+}
+
+.folder--spread .expand-bl img {
+  width: 210px;
+}
+
+.folder--spread .expand-label {
+  font-family: "EB Garamond", serif;
+  font-size: 14.5px;
+  line-height: 1.35;
+  color: #6d83a2;
+  text-align: center;
+}
+
+/* 图标外面单独包一层 .expand-icon 来做持续的上下漂浮，
+   跟 .expand-item 本身的展开/收回位移（transition）分开在两层元素上，
+   互不覆盖；文字标签留在 .expand-item 上，不会跟着一起浮动 */
+.folder--spread .expand-icon {
+  display: inline-block;
+  will-change: transform;
+}
+
+.folder--spread .expand-item { will-change: transform; }
+
+/* .floatable 是"负责浮动动画"的那一层——My Portfolio 拆成场记板/唱片机/
+   相机三个独立热区之后，每个热区自己的 .floatable 各管各的浮动，
+   悬停暂停互不影响；Past Internship / Educational Background 还是老样子，
+   .expand-icon 本身兼任 .floatable */
+.folder--spread .floatable { display: inline-block; width: 100%; height: 100%; will-change: transform; }
+
+/* 0% / 100% 都是 translateY(0)，跟"展开位移完成后"的静止位置完全一致，
+   浮动动画开始播放的瞬间不会有任何跳变；中间帧才做 -8px ~ 8px 的往返 */
+@keyframes icon-float {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(8px); }
+}
+
+/* .floaty 由 JS 在监听到展开位移的 transitionend 之后才添加，
+   不再用固定的 animation-delay 数字去猜时间，衔接更精准；
+   三个图标周期长度不同（3.4s/3.6s/3.8s），错落不会同步。
+   My Portfolio 的三个子热区用的是和原来 expand-br 相同的 3.6s，
+   所以视觉上还是像同一个图标在整体浮动，没有拆开的痕迹 */
+.folder--spread .expand-top .floatable.floaty { animation: icon-float 3.4s ease-in-out infinite; }
+.folder--spread .expand-br .floatable.floaty { animation: icon-float 3.6s ease-in-out infinite; }
+.folder--spread .expand-bl .floatable.floaty { animation: icon-float 3.8s ease-in-out infinite; }
+
+/* 悬浮时：暂停浮动动画（停在当前帧，不重置/不跳变），最内层 img 单独放大。
+   :hover 天然只作用于鼠标真正停留的那一个元素，场记板/唱片机/相机
+   三个 .floatable 各自独立，不会互相牵连 */
+.folder--spread .floatable.floaty:hover {
+  animation-play-state: paused;
+}
+
+.folder--spread .floatable:hover img {
+  transform: scale(1.15);
+}
+
+/* ---------- My Portfolio 专用：场记板 / 唱片机 / 相机三个独立热区 ---------- */
+
+.folder--spread .expand-br .expand-icon {
+  position: relative;
+  width: 210px;
+  height: 164.3px; /* 210 * (339/433)，跟原来合并图片的宽高比一致 */
+}
+
+.portfolio-hotspot {
+  position: absolute;
+  display: block;
+}
+
+.portfolio-hotspot .hotspot-tilt {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.25s ease-out;
+}
+
+/* 悬停到某一个热区上：三个图标的浮动动画整体一起暂停（用 :has() 感知
+   容器内是否有任意一个 .portfolio-hotspot 被悬停），不只是被悬停的那个 */
+.folder--spread .expand-br .expand-icon:has(.portfolio-hotspot:hover) .floatable.floaty {
+  animation-play-state: paused;
+}
+
+/* 被悬停的那一个额外叠加"微微上浮"，和已有的 img 放大效果叠加出现；
+   旋转角度要和上浮位移写在同一个 transform 里，否则会互相覆盖掉 */
+.portfolio-hotspot:hover .hotspot-tilt { transform: translateY(-6px); }
+.portfolio-hotspot.clapper:hover .hotspot-tilt { transform: translateY(-6px) rotate(-8deg); }
+.portfolio-hotspot.camera:hover .hotspot-tilt { transform: translateY(-6px) rotate(6deg); }
+
+/* 新增：悬停时在对应图标旁边浮现分类名称 */
+.hotspot-label {
+  position: absolute;
+  left: 50%;
+  top: -24px;
+  transform: translateX(-50%);
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #6d83a2;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.portfolio-hotspot:hover .hotspot-label { opacity: 1; }
+
+/* 场记板的标签往左偏、相机的标签往右偏，拉开跟中间唱片机的距离，
+   避免三个标签互相挤在一起或者压到唱片机图标上 */
+.portfolio-hotspot.clapper .hotspot-label { left: 20%; }
+.portfolio-hotspot.camera .hotspot-label { left: 112%; }
+
+/* 特意写成 .folder--spread .expand-br .portfolio-hotspot img 这种更长的
+   选择器，确保优先级压得过前面 .folder--spread .expand-item img 那条
+   全局兜底规则，不会在移动端被那条规则的固定宽度覆盖掉 */
+.folder--spread .expand-br .portfolio-hotspot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(51, 64, 79, 0.2));
+  transform: scale(1);
+  transition: transform 0.25s ease-out;
+}
+
+/* 位置/尺寸/层级按原来合并图片里三者的相对比例还原，旋转角度也参照原图；
+   唱片机 top 改成负值，让它比另两个再往上探出一点（容器没有裁切，
+   探出去不会被裁掉） */
+.portfolio-hotspot.clapper    { left: 0%;     top: 44.2%;  width: 35.8%; height: 50.1%; z-index: 2; }
+.portfolio-hotspot.turntable  { left: 23.1%;  top: -10%;   width: 64.7%; height: 76.7%; z-index: 1; }
+.portfolio-hotspot.camera     { left: 64.7%;  top: 57.5%;  width: 35.3%; height: 36.9%; z-index: 2; }
+
+.portfolio-hotspot.clapper .hotspot-tilt   { transform: rotate(-8deg); }
+.portfolio-hotspot.camera .hotspot-tilt    { transform: rotate(6deg); }
+
+/* 展开：三者各自飞到明显分开的位置，彼此留出大片空白 */
+.folder--spread.open .expand-item {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.folder--spread.open .expand-top {
+  transform: translate(-50%, calc(-50% - 250px)) scale(1);
+}
+
+.folder--spread.open .expand-br {
+  transform: translate(calc(-50% + 210px), calc(-50% + 190px)) scale(1);
+}
+
+.folder--spread.open .expand-bl {
+  transform: translate(calc(-50% - 210px), calc(-50% + 190px)) scale(1);
+}
+
+@media (max-width: 700px) {
+  .folder--spread { width: 110px; height: 88px; }
+  .folder--spread .folder__back::after { width: 32px; height: 11px; }
+  .folder--spread .expand-item { width: 118px; }
+  .folder--spread .expand-item img { width: 104px; height: auto; }
+  .folder--spread .expand-bl img { width: 128px; }
+  /* My Portfolio 三个热区的容器整体缩小，内部各热区的百分比尺寸不用跟着改 */
+  .folder--spread .expand-br .expand-icon { width: 128px; height: 100.2px; }
+  .folder--spread .expand-label { font-size: 12.5px; }
+  .folder--spread.open .expand-top { transform: translate(-50%, calc(-50% - 170px)) scale(1); }
+  .folder--spread.open .expand-br { transform: translate(calc(-50% + 140px), calc(-50% + 130px)) scale(1); }
+  .folder--spread.open .expand-bl { transform: translate(calc(-50% - 140px), calc(-50% + 130px)) scale(1); }
+}
+
+/* 让文件夹本身和展开图标视觉大小协调（这个尺寸只针对首页这一个文件夹，
+   不影响 about.html 那三个文件夹） */
+.folder--spread { width: 150px; height: 120px; }
+.folder--spread .folder__back::after { width: 44px; height: 15px; }
+
+/* ---------- Folder 组件本体 ---------- */
+
+.folder {
+  --folder-color: #5ce1e6;
+  --folder-back-color: #37b9be;
+  --paper-1: #ece4d0;
+  --paper-2: #f6f1e4;
+  --paper-3: #fffdf7;
+  position: relative;
+  width: 176px;
+  height: 141px;
+  transition: transform 0.2s ease-in;
+  cursor: pointer;
+}
+
+.folder:hover { transform: translateY(-8px); }
+.folder.open { transform: translateY(-8px); }
+
+.folder:focus-visible {
+  outline: 2px solid #5ce1e6;
+  outline-offset: 6px;
+  border-radius: 10px;
+}
+
+.folder__back {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--folder-back-color);
+  border-radius: 0 16px 16px 16px;
+}
+
+.folder__back::after {
+  position: absolute;
+  z-index: 0;
+  bottom: 98%;
+  left: 0;
+  content: "";
+  width: 52px;
+  height: 17px;
+  background: var(--folder-back-color);
+  border-radius: 8px 8px 0 0;
+}
+
+.paper {
+  position: absolute;
+  z-index: 2;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, 10%);
+  width: 70%;
+  height: 80%;
+  background: var(--paper-1);
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(51, 64, 79, 0.12);
+  transition: transform 0.3s ease-in-out, height 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+  overflow: hidden;
+}
+
+.paper span {
+  font-family: "EB Garamond", serif;
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: #4c6180;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out 0.15s;
+}
+
+.folder.open .paper span { opacity: 1; }
+
+.paper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+/* 放图片的纸张不需要文字内边距，让图片真正贴边填满 */
+.paper:has(img) { padding: 0; }
+
+.paper:nth-child(2) { background: var(--paper-2); width: 80%; height: 70%; }
+.paper:nth-child(3) { background: var(--paper-3); width: 90%; height: 60%; }
+
+.folder__front {
+  position: absolute;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  background: var(--folder-color);
+  border-radius: 8px 16px 16px 16px;
+  transform-origin: bottom;
+  transition: transform 0.3s ease-in-out;
+}
+
+.folder:hover .folder__front { transform: skew(15deg) scaleY(0.6); }
+.folder:hover .right { transform: skew(-15deg) scaleY(0.6); }
+.folder.open .folder__front { transform: skew(15deg) scaleY(0.6); }
+.folder.open .right { transform: skew(-15deg) scaleY(0.6); }
+
+.folder:hover .paper { transform: translate(-50%, 0%); }
+
+/* 展开位置：叠加鼠标移动带来的磁吸偏移 --magnet-x / --magnet-y（未设置时按 0 计算） */
+.folder.open .paper:nth-child(1) {
+  transform: translate(calc(-120% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px))) rotateZ(-15deg);
+}
+.folder.open .paper:nth-child(1):hover {
+  transform: translate(calc(-120% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px))) rotateZ(-15deg) scale(1.1);
+}
+.folder.open .paper:nth-child(2) {
+  transform: translate(calc(10% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px))) rotateZ(15deg);
+  height: 80%;
+}
+.folder.open .paper:nth-child(2):hover {
+  transform: translate(calc(10% + var(--magnet-x, 0px)), calc(-70% + var(--magnet-y, 0px))) rotateZ(15deg) scale(1.1);
+}
+.folder.open .paper:nth-child(3) {
+  transform: translate(calc(-50% + var(--magnet-x, 0px)), calc(-100% + var(--magnet-y, 0px))) rotateZ(5deg);
+  height: 80%;
+}
+.folder.open .paper:nth-child(3):hover {
+  transform: translate(calc(-50% + var(--magnet-x, 0px)), calc(-100% + var(--magnet-y, 0px))) rotateZ(5deg) scale(1.1);
+}
+
+@media (max-width: 700px) {
+  .folder-row { gap: 50px; }
+  .folder { width: 140px; height: 112px; }
+}

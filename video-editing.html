@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Editing · Yvonne Tang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&family=Yeseva+One&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/tv-stack.css?v=13">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">YVONNE TANG</a>
+    <button class="nav-toggle" aria-label="菜单">☰</button>
+    <ul class="nav-links">
+      <li><a href="index.html#top">Home</a></li>
+      <li><a href="index.html#about">About</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="video-showcase">
+  <div class="tv-stack">
+    <p class="tv-stack-hint">Click a TV to watch the videos</p>
+
+    <!-- Journalism → 视频1 -->
+    <div class="tv-hotspot journalism" data-video="photos/Video/1.mp4" role="button" tabindex="0" aria-label="Journalism">
+      <img class="tv-static" src="assets/images/tv-static-journalism.jpg" alt="">
+      <video class="tv-preview" src="photos/Video/1.mp4" muted loop playsinline preload="none"></video>
+      <div class="tv-scanlines"></div>
+      <div class="tv-noise-flash"></div>
+      <span class="tv-label">Journalism</span>
+    </div>
+
+    <!-- Creative Projects → 视频2 -->
+    <div class="tv-hotspot creative" data-video="photos/Video/2.mp4" role="button" tabindex="0" aria-label="Creative Projects">
+      <img class="tv-static" src="assets/images/tv-static-creative.jpg" alt="">
+      <video class="tv-preview" src="photos/Video/2.mp4" muted loop playsinline preload="none"></video>
+      <div class="tv-scanlines"></div>
+      <div class="tv-noise-flash"></div>
+      <span class="tv-label">Creative Projects</span>
+    </div>
+
+    <!-- Commercial → 抖音外链：这台是斜着拍的，单独拆成一个可旋转的
+         wrapper——tv17-derotated.png 是把这台电视"转正"之后的版本，
+         wrapper 整体转回原来拍摄的角度(13.96deg)，电视图和里面的
+         视频热区绑在一起转，不会再出现"电视是斜的、视频是正的"错位 -->
+    <div class="tv17-wrapper">
+      <img class="tv17-shell" src="assets/images/tv17-derotated.png?v=2" alt="">
+      <div class="tv-hotspot commercial" data-link="https://www.douyin.com/user/MS4wLjABAAAA1ZgHTGyKGJ2Ipn88TGjHLEX4aioKffuCBjIyGi1ooDlvMSIwDoHuw0U5DF7TmRRx?from_tab_name=main&amp;modal_id=7599631039887052047" role="button" tabindex="0" aria-label="Commercial">
+        <img class="tv-static" src="assets/images/tv-static-commercial.jpg" alt="">
+        <video class="tv-preview" src="photos/Video/5.mp4" muted loop playsinline preload="none"></video>
+        <div class="tv-scanlines"></div>
+        <div class="tv-noise-flash"></div>
+        <span class="tv-label">Commercial</span>
+      </div>
+    </div>
+
+    <!-- 二排左边 → 视频3 -->
+    <div class="tv-hotspot midleft" data-video="photos/Video/3.mp4" role="button" tabindex="0" aria-label="播放视频">
+      <img class="tv-static" src="assets/images/tv-static-deco-mid.jpg" alt="">
+      <video class="tv-preview" src="photos/Video/3.mp4" muted loop playsinline preload="none"></video>
+      <div class="tv-scanlines"></div>
+      <div class="tv-noise-flash"></div>
+    </div>
+
+    <!-- 最顶部 → 素材23（同款斜置电视）→ 视频4，悬停播放/循环，先不做
+         点击弹窗；同样是斜着拍的，沿用 Commercial 那台的"转正再转回去"
+         方案：tv23-derotated.png 是转正后的版本，wrapper 整体转回原
+         拍摄角度(-5.856deg)，热区按屏幕在转正图里的位置摆放，跟着
+         wrapper 一起转 -->
+    <div class="tv23-wrapper">
+      <img class="tv23-shell" src="assets/images/tv23-derotated.png" alt="">
+      <div class="tv-hotspot tv23-screen" data-link="https://www.douyin.com/user/MS4wLjABAAAA1ZgHTGyKGJ2Ipn88TGjHLEX4aioKffuCBjIyGi1ooDlvMSIwDoHuw0U5DF7TmRRx?from_tab_name=main&amp;modal_id=7597780398139051305" role="button" tabindex="0" aria-label="播放视频">
+        <img class="tv-static" src="assets/images/tv23-static-noise.jpg" alt="">
+        <video class="tv-preview" src="photos/Video/4.mp4" muted loop playsinline preload="none"></video>
+        <div class="tv-scanlines"></div>
+        <div class="tv-noise-flash"></div>
+      </div>
+    </div>
+
+    <!-- 电视机整体图（素材20，屏幕区域本身就是真实镂空透明的），盖在
+         所有热区/装饰填充上方，靠自身镂空轮廓限定下面内容的可见范围；
+         pointer-events:none 让点击/悬停穿透到下面的热区上 -->
+    <img class="tv-collage" src="assets/images/tv-stack-nostatic.png?v=4" alt="复古电视堆叠">
+  </div>
+
+  <div class="vs-copy">
+    <h2>Video Editing</h2>
+    <p class="vs-body">This portfolio is organised into three sections: Creative Projects, Journalism, and Commercial. The first two feature academic projects completed during my Master's studies, while the Commercial section showcases campaign-based video content produced during my internship.</p>
+    <a href="index.html#about" class="vs-back">← Back</a>
+  </div>
+</section>
+
+<div class="video-modal-overlay" id="videoModalOverlay">
+  <div class="video-modal">
+    <button type="button" class="video-modal-close" id="videoModalClose" aria-label="关闭">&times;</button>
+    <video id="videoModalPlayer" controls playsinline></video>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>
+      <p class="brand">YVONNE TANG</p>
+      <p class="copyright">© 2026 唐艺文 · Tang Yiwen</p>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+<script src="assets/js/tv-stack.js"></script>
+</body>
+</html>

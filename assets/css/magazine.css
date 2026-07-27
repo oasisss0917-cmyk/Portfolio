@@ -1,0 +1,251 @@
+/* ==========================================================================
+   editorial-design.html — 杂志跨页翻阅（St.PageFlip）
+   ========================================================================== */
+
+/* 左边文字说明 + 右边杂志展示的两栏布局，跟 Video Editing 页面
+   （.video-showcase / .vs-copy）是同一套结构 */
+.magazine-showcase {
+  background: #f4f0e3;
+  min-height: calc(100vh - 76px);
+  padding: 70px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 70px;
+  flex-wrap: wrap;
+}
+
+.magazine-copy {
+  max-width: 400px;
+}
+
+.magazine-title {
+  font-family: "EB Garamond", serif;
+  font-weight: 600;
+  color: #6d83a2;
+  font-size: clamp(28px, 4vw, 40px);
+  margin: 0 0 18px;
+}
+
+.magazine-body {
+  font-family: "EB Garamond", serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #6d83a2;
+  opacity: 0.85;
+  margin: 0 0 26px;
+}
+
+.magazine-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  /* 显式给个具体宽度（跟 .magazine-stage 的 max-width 对齐），否则
+     .magazine-stage 内部两个子元素都是 position:absolute、没有
+     常规文档流内容撑起宽度，"width:100%" 在这个 flex 列容器里没有
+     确定的百分比基准可以参照，会直接塌成 0 宽度 */
+  width: 680px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+/* 封面和书本共用的舞台：两者都用 position:absolute 叠在同一块区域，
+   而不是各自占一段普通文档流——封面转开、书本出现，只是同一个位置
+   上的内容切换，不会因为封面收起导致下面内容跟着重新排版跳动。
+   高度由 magazine.js 按封面的实际渲染高度动态设置（响应式，纯 CSS
+   算不出这个高度） */
+.magazine-stage {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  margin: 0;
+}
+
+/* 独立封面：不参与 St.PageFlip，铺满展示，避免库在跨页模式下
+   "封面右边、左边强制留白"的固定行为。点击后干净地缩小+淡出，
+   书本同时放大+淡入——不再尝试模拟"同一张纸的两面"，封面和内页
+   原始比例本来就不一样，硬做仿真翻页在切换瞬间反而会露出裁切
+   范围对不上的破绽，比简单过渡更别扭 */
+.magazine-cover-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 340px;
+  margin: 0;
+  z-index: 2;
+}
+
+.magazine-cover {
+  position: relative;
+  width: 100%;
+  /* 强制用和书内页一样的比例（400:566），不用封面图自己原始的比例
+     （648:976）——两者数值不一样的话，封面和书在同样宽度下算出来的
+     高度会差一截，容器高度从"按封面高度"切到"按书高度"那一刻就会
+     跳一下。裁成同一个比例后，全程高度都不会变 */
+  aspect-ratio: 400 / 566;
+  cursor: pointer;
+  box-shadow:
+    0 30px 50px -20px rgba(60, 45, 30, 0.35),
+    0 12px 20px -10px rgba(60, 45, 30, 0.2);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* 书脊压痕：左侧靠边一条竖线，亮暗两条细线贴在一起模拟布面精装书
+   封面被压出的那道折痕，让它看起来是"包着书脊的封面"而不是一张
+   平贴的图 */
+.magazine-cover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5%;
+  width: 5px;
+  background:
+    linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.22) 0%,
+      rgba(0, 0, 0, 0.22) 35%,
+      rgba(255, 255, 255, 0.3) 55%,
+      rgba(255, 255, 255, 0.3) 65%,
+      transparent 100%
+    );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.magazine-cover.is-leaving {
+  opacity: 0;
+  transform: scale(0.92);
+}
+
+.magazine-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 裁成上面 aspect-ratio 设的书页比例，按中心裁切 */
+  object-fit: cover;
+}
+
+.magazine-open-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #fff;
+  background: rgba(23, 24, 26, 0.55);
+  padding: 7px 18px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.magazine-cover:hover .magazine-open-hint,
+.magazine-cover:focus-visible .magazine-open-hint {
+  opacity: 1;
+}
+
+.magazine-flip-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: 680px;
+  margin: 0;
+  opacity: 0;
+  /* 只做透明度淡入，不做缩放——书内页的尺寸完全交给 St.PageFlip 自己
+     计算和渲染，外层再叠加一个缩放动画容易在出现瞬间造成视觉上的
+     位移/晃动感 */
+  transition: opacity 0.5s ease;
+  z-index: 1;
+}
+
+.magazine-flip-wrap.is-visible {
+  opacity: 1;
+}
+
+/* 书本底部阴影：St.PageFlip 自己只画翻页动态阴影，不画静止摆放的
+   投影，这里额外加一层柔和、大扩散的阴影，让书本看起来像悬浮/摆在
+   米色背景上，而不是贴纸一样平贴着 */
+.magazine-flipbook {
+  box-shadow:
+    0 30px 50px -20px rgba(60, 45, 30, 0.35),
+    0 12px 20px -10px rgba(60, 45, 30, 0.2);
+}
+
+/* 中缝装订线：纯装饰渐变条，默认不显示，只在 St.PageFlip 处于
+   "跨页并排"模式时（magazine.js 会给 .magazine-flip-wrap 加上
+   is-spread class）才淡入显示——单页模式没有中缝，不该出现 */
+.magazine-gutter {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 44px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(0, 0, 0, 0.16) 45%,
+    rgba(0, 0, 0, 0.16) 55%,
+    transparent
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+.magazine-flip-wrap.is-spread .magazine-gutter {
+  display: block;
+}
+
+/* St.PageFlip 会给每个 .page 元素设 position/尺寸，这里只管内部排版 */
+.magazine-flipbook .page {
+  background: #fff;
+  overflow: hidden;
+}
+
+.magazine-flipbook .page img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* 素材本身就是设计好的完整跨页版面，用 contain 完整显示、不裁剪 */
+  object-fit: contain;
+}
+
+.magazine-page-indicator {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  color: #6d83a2;
+  font-size: 14px;
+  opacity: 0.85;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.magazine-back {
+  display: inline-block;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  color: #6d83a2;
+  font-size: 15px;
+  border-bottom: 1px solid #6d83a2;
+  padding-bottom: 2px;
+  text-decoration: none;
+}
+
+@media (max-width: 620px) {
+  .magazine-showcase {
+    flex-direction: column;
+    padding: 44px 16px;
+    gap: 30px;
+  }
+  .magazine-copy { max-width: none; }
+}

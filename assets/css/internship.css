@@ -1,0 +1,106 @@
+/* ==========================================================================
+   internship.html — Past Internship 子页面
+   风格和 Video Editing / Podcast / Editorial Design 这几个作品集页面
+   保持统一：米色背景 + EB Garamond 衬线体 + 白色内容卡片，而不是
+   About/Experience 那套"简历风"（细分割线+大写小标签）
+   ========================================================================== */
+
+.internship-showcase {
+  background: #f4f0e3;
+  padding: 70px 40px;
+}
+
+.internship-hero {
+  max-width: 1300px;
+  margin: 0 auto 40px;
+}
+
+.internship-back {
+  display: inline-block;
+  margin-bottom: 30px;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  color: #6d83a2;
+  font-size: 15px;
+  border-bottom: 1px solid #6d83a2;
+  padding-bottom: 2px;
+  text-decoration: none;
+}
+
+.internship-title {
+  font-family: "EB Garamond", serif;
+  font-weight: 600;
+  font-size: clamp(32px, 4vw, 48px);
+  color: #4c6180;
+  margin: 0 0 14px;
+}
+
+.internship-intro {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #6d83a2;
+  margin: 0;
+}
+
+.internship-card {
+  max-width: 1300px;
+  margin: 0 auto 40px;
+  background: #ffffff;
+  padding: 60px 70px;
+}
+
+.internship-card h2 {
+  font-family: "EB Garamond", serif;
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 32px);
+  color: #4c6180;
+  margin: 0 0 10px;
+}
+
+.internship-meta {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #a7b6cc;
+  margin: 0 0 34px;
+}
+
+.internship-list {
+  margin: 0 0 30px;
+  padding-left: 20px;
+}
+
+.internship-list li {
+  font-family: "EB Garamond", serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #6d83a2;
+  margin-bottom: 16px;
+}
+
+.internship-list li strong {
+  color: #4c6180;
+  font-weight: 600;
+}
+
+.internship-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.internship-chip {
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #6d83a2;
+  background: #f4f0e3;
+  padding: 7px 18px;
+  border-radius: 20px;
+}
+
+@media (max-width: 700px) {
+  .internship-showcase { padding: 44px 20px; }
+  .internship-card { padding: 40px 28px; }
+}
